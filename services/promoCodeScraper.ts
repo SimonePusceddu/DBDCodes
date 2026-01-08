@@ -53,9 +53,8 @@ function extractCodesFromHtml(html: string): PromoCode[] {
       const jsArray = couponsMatch[1];
       const jsonString = convertJsToJson(jsArray);
       const rawCoupons: RawCouponData[] = JSON.parse(jsonString);
-      return rawCoupons
-        .map(transformRawCoupon)
-        .filter((code) => !code.isExpired);
+      // Return all codes, we'll separate active/expired in the UI
+      return rawCoupons.map(transformRawCoupon);
     } catch (e) {
       console.error('Failed to parse coupons array:', e);
     }
