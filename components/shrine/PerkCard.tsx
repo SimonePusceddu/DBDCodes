@@ -12,18 +12,26 @@ import {
 
 const CARD_WIDTH = (Dimensions.get('window').width - Spacing.lg * 3) / 2;
 
-// Try different possible CDN URLs (including bunny.net CDN)
+// Try different possible CDN URLs (prioritize most likely to work)
 const CDN_URLS = [
-  'https://nightlight.gg',
-  'https://nightlight.gg/assets',
   'https://cdn.nightlight.gg',
+  'https://nightlight.gg',
   'https://assets.nightlight.gg',
-  'https://nightlight.b-cdn.net',
   'https://nightlight-gg.b-cdn.net',
 ];
 
 interface Props {
   perk: ShrinePerk;
+}
+
+function buildImageUrl(baseUrl: string, imagePath: string): string {
+  // Remove leading slash from image path if present
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+  
+  // If base URL ends with a path segment, ensure proper joining
+  const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  
+  return `${base}/${cleanPath}`;
 }
 
 export function PerkCard({ perk }: Props) {
@@ -35,7 +43,9 @@ export function PerkCard({ perk }: Props) {
     ? DBDColors.shrine.killer
     : DBDColors.shrine.survivor;
 
-  const imageUrl = perk.image ? `${CDN_URLS[currentUrlIndex]}/${perk.image}` : null;
+  const imageUrl = perk.image
+    ? buildImageUrl(CDN_URLS[currentUrlIndex], perk.image)
+    : null;
 
   const handleImageError = () => {
     // Try next CDN URL
@@ -73,7 +83,11 @@ export function PerkCard({ perk }: Props) {
       ) : null}
 
       <View style={styles.costRow}>
-        <View style={styles.shardIcon} />
+        <Image
+          source={require('@/assets/images/iridescent-shards.png')}
+          style={styles.shardIcon}
+          resizeMode="contain"
+        />
         <Text style={styles.cost}>{perk.shards.toLocaleString()}</Text>
       </View>
     </View>
@@ -126,8 +140,6 @@ const styles = StyleSheet.create({
   shardIcon: {
     width: 16,
     height: 16,
-    backgroundColor: DBDColors.shrine.shards,
-    borderRadius: BorderRadius.full,
   },
   cost: {
     ...Typography.caption,

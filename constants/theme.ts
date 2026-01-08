@@ -45,7 +45,7 @@ export const DBDColors = {
   shrine: {
     survivor: '#4CAF50',
     killer: '#DC143C',
-    shards: '#9C27B0',
+    shards: '#0288D1', // Darker blue for iridescent shards
   },
 };
 

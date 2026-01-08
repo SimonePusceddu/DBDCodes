@@ -2,7 +2,6 @@ import React from 'react';
 import {
   View,
   ScrollView,
-  RefreshControl,
   StyleSheet,
   Text,
   ActivityIndicator,
@@ -19,13 +18,7 @@ export default function HomeScreen() {
   const {
     codes,
     isLoading,
-    isRefreshing,
-    refresh: refreshCodes,
   } = usePromoCodes();
-
-  const handleRefresh = async () => {
-    await refreshCodes();
-  };
 
   if (isLoading) {
     return (
@@ -43,15 +36,6 @@ export default function HomeScreen() {
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            tintColor={DBDColors.accent.secondary}
-            colors={[DBDColors.accent.secondary]}
-            progressBackgroundColor={DBDColors.background.secondary}
-          />
-        }
       >
         <View style={styles.header}>
           <Text style={styles.title}>Promo</Text>
