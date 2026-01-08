@@ -10,7 +10,8 @@
       "Bash(npx tsc:*)",
       "Bash(npm uninstall:*)",
       "WebFetch(domain:nightlight.gg)",
-      "WebFetch(domain:api.nightlight.gg)"
+      "WebFetch(domain:api.nightlight.gg)",
+      "mcp__ide__getDiagnostics"
     ]
   }
 }

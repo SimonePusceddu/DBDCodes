@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
 import { Skull, Heart } from 'lucide-react-native';
 import { ShrinePerk } from '@/types';
 import {
@@ -14,9 +14,10 @@ const CARD_WIDTH = (Dimensions.get('window').width - Spacing.lg * 3) / 2;
 
 interface Props {
   perk: ShrinePerk;
+  onPress?: () => void;
 }
 
-export function PerkCard({ perk }: Props) {
+export function PerkCard({ perk, onPress }: Props) {
   const isKiller = perk.type === 'killer';
   const IconComponent = isKiller ? Skull : Heart;
   const accentColor = isKiller
@@ -24,7 +25,11 @@ export function PerkCard({ perk }: Props) {
     : DBDColors.shrine.survivor;
 
   return (
-    <View style={[styles.card, { borderColor: accentColor }]}>
+    <TouchableOpacity
+      style={[styles.card, { borderColor: accentColor }]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
       <View style={[styles.iconContainer, { backgroundColor: accentColor + '20' }]}>
         <IconComponent size={32} color={accentColor} />
       </View>
@@ -47,7 +52,7 @@ export function PerkCard({ perk }: Props) {
         />
         <Text style={styles.cost}>{perk.shards.toLocaleString()}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

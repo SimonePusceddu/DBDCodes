@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Store } from 'lucide-react-native';
 import { PerkCard } from './PerkCard';
+import { PerkDetailModal } from './PerkDetailModal';
 import { CountdownTimer } from './CountdownTimer';
 import { ShrinePerk } from '@/types';
 import { DBDColors, Spacing, Typography } from '@/constants/theme';
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export function ShrineGrid({ perks, resetTime }: Props) {
+  const [selectedPerk, setSelectedPerk] = useState<ShrinePerk | null>(null);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -24,9 +27,18 @@ export function ShrineGrid({ perks, resetTime }: Props) {
 
       <View style={styles.grid}>
         {perks.slice(0, 4).map((perk) => (
-          <PerkCard key={perk.id} perk={perk} />
+          <PerkCard
+            key={perk.id}
+            perk={perk}
+            onPress={() => setSelectedPerk(perk)}
+          />
         ))}
       </View>
+
+      <PerkDetailModal
+        perk={selectedPerk}
+        onClose={() => setSelectedPerk(null)}
+      />
     </View>
   );
 }
