@@ -26,7 +26,7 @@ export function PromoCodesList({ codes }: Props) {
       }
     });
 
-    // Sort active codes: new codes first, then expiring soon, then by days left
+    // Sort active codes: new codes first, then expiring soon, then by days left (soonest first)
     active.sort((a, b) => {
       const aIsNew = isLoaded && isNewCode(a.id);
       const bIsNew = isLoaded && isNewCode(b.id);
@@ -48,8 +48,8 @@ export function PromoCodesList({ codes }: Props) {
         }
       }
 
-      // 3. Then by days left (most days first)
-      return (b.daysLeft ?? 0) - (a.daysLeft ?? 0);
+      // 3. Then by days left (soonest first - fewest days first)
+      return (a.daysLeft ?? 999) - (b.daysLeft ?? 999);
     });
 
     return { activeCodes: active, expiredCodes: expired };

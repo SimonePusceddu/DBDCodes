@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Linking, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native';
-import { Github, Globe, Heart, ExternalLink } from 'lucide-react-native';
+import { Github, Globe, ExternalLink } from 'lucide-react-native';
 import {
   DBDColors,
   Spacing,
@@ -32,34 +32,6 @@ export default function AboutScreen() {
             Your companion app for Dead by Daylight promo codes and Shrine of
             Secrets tracking.
           </Text>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Features</Text>
-          <View style={styles.featureList}>
-            <View style={styles.featureItem}>
-              <Heart size={18} color={DBDColors.accent.secondary} />
-              <Text style={styles.featureText}>
-                Live promo codes from dbdcoupons.com
-              </Text>
-            </View>
-            <View style={styles.featureItem}>
-              <Heart size={18} color={DBDColors.accent.secondary} />
-              <Text style={styles.featureText}>
-                Shrine of Secrets with weekly countdown
-              </Text>
-            </View>
-            <View style={styles.featureItem}>
-              <Heart size={18} color={DBDColors.accent.secondary} />
-              <Text style={styles.featureText}>
-                One-tap copy with haptic feedback
-              </Text>
-            </View>
-            <View style={styles.featureItem}>
-              <Heart size={18} color={DBDColors.accent.secondary} />
-              <Text style={styles.featureText}>Pull-to-refresh updates</Text>
-            </View>
-          </View>
         </View>
 
         <View style={styles.card}>
@@ -133,19 +105,6 @@ const styles = StyleSheet.create({
     ...Typography.subtitle,
     color: DBDColors.text.primary,
     marginBottom: Spacing.md,
-  },
-  featureList: {
-    gap: Spacing.sm,
-  },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  featureText: {
-    ...Typography.body,
-    color: DBDColors.text.secondary,
-    flex: 1,
   },
   linkButton: {
     flexDirection: 'row',
