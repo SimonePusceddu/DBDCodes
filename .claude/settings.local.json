@@ -8,7 +8,9 @@
       "Bash(npx expo install:*)",
       "Bash(npm install:*)",
       "Bash(npx tsc:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "WebFetch(domain:nightlight.gg)",
+      "WebFetch(domain:api.nightlight.gg)"
     ]
   }
 }

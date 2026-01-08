@@ -9,10 +9,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PromoCodesList } from '@/components/codes/PromoCodesList';
-import { ShrineGrid } from '@/components/shrine/ShrineGrid';
 import { Toast } from '@/components/ui/Toast';
 import { usePromoCodes } from '@/hooks/usePromoCodes';
-import { useShrineOfSecrets } from '@/hooks/useShrineOfSecrets';
 import { useAppContext } from '@/context/AppContext';
 import { DBDColors, Spacing, Typography } from '@/constants/theme';
 
@@ -24,10 +22,9 @@ export default function HomeScreen() {
     isRefreshing,
     refresh: refreshCodes,
   } = usePromoCodes();
-  const { shrine, refresh: refreshShrine } = useShrineOfSecrets();
 
   const handleRefresh = async () => {
-    await Promise.all([refreshCodes(), refreshShrine()]);
+    await refreshCodes();
   };
 
   if (isLoading) {
@@ -57,15 +54,11 @@ export default function HomeScreen() {
         }
       >
         <View style={styles.header}>
-          <Text style={styles.title}>DBD</Text>
+          <Text style={styles.title}>Promo</Text>
           <Text style={styles.titleAccent}>Codes</Text>
         </View>
 
         <PromoCodesList codes={codes} />
-
-        {shrine ? (
-          <ShrineGrid perks={shrine.perks} resetTime={shrine.endTime} />
-        ) : null}
       </ScrollView>
 
       <Toast

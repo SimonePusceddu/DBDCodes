@@ -20,32 +20,41 @@ export interface PromoCodesResponse {
 
 // === SHRINE OF SECRETS ===
 export interface ShrinePerk {
-  id: string;
+  id: number;
   name: string;
   bloodpoints: number;
   shards: number;
-  iconUrl?: string;
+  image?: string;
   characterName?: string;
   type: 'survivor' | 'killer';
+  usageTier?: 'high' | 'low';
 }
 
 export interface ShrineData {
-  id: number;
+  week: number;
   perks: ShrinePerk[];
   startTime: Date;
   endTime: Date;
   lastUpdated: Date;
 }
 
-export interface ShrineApiResponse {
-  id: number;
-  perks: Array<{
-    id: string;
-    bloodpoints: number;
-    shards: number;
-  }>;
-  start: number;
-  end: number;
+export interface NightLightShrineResponse {
+  status: string;
+  error: null | string;
+  data: {
+    start: string;
+    end: string;
+    week: number;
+    perks: Array<{
+      id: number;
+      bloodpoints: number;
+      shards: number;
+      name: string;
+      image: string;
+      character: string;
+      usage_tier: 'high' | 'low';
+    }>;
+  };
 }
 
 // === APP STATE ===

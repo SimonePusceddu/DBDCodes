@@ -74,10 +74,10 @@ export default function AboutScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkButton}
-            onPress={() => openLink('https://dbd.tricky.lol/')}
+            onPress={() => openLink('https://nightlight.gg/')}
           >
             <Globe size={20} color={DBDColors.text.primary} />
-            <Text style={styles.linkText}>dbd.tricky.lol API</Text>
+            <Text style={styles.linkText}>NightLight.gg API</Text>
             <ExternalLink size={16} color={DBDColors.text.muted} />
           </TouchableOpacity>
         </View>

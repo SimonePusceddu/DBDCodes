@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Home, Info } from 'lucide-react-native';
+import { Home, Store, Info } from 'lucide-react-native';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { DBDColors } from '@/constants/theme';
@@ -23,8 +23,15 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Codes',
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="shrine"
+        options={{
+          title: 'Shrine',
+          tabBarIcon: ({ color, size }) => <Store size={size} color={color} />,
         }}
       />
       <Tabs.Screen
