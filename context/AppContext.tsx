@@ -4,13 +4,14 @@ import React, {
   useReducer,
   ReactNode,
 } from 'react';
-import { PromoCodesResponse, ShrineData, AppState } from '@/types';
+import { PromoCodesResponse, ShrineData, NewsResponse, AppState } from '@/types';
 
 type Action =
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_REFRESHING'; payload: boolean }
   | { type: 'SET_PROMO_CODES'; payload: PromoCodesResponse }
   | { type: 'SET_SHRINE'; payload: ShrineData | null }
+  | { type: 'SET_NEWS'; payload: NewsResponse | null }
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'SHOW_TOAST'; payload: string }
   | { type: 'HIDE_TOAST' };
@@ -18,6 +19,7 @@ type Action =
 const initialState: AppState = {
   promoCodes: null,
   shrine: null,
+  news: null,
   isLoading: true,
   isRefreshing: false,
   error: null,
@@ -34,6 +36,8 @@ function appReducer(state: AppState, action: Action): AppState {
       return { ...state, promoCodes: action.payload };
     case 'SET_SHRINE':
       return { ...state, shrine: action.payload };
+    case 'SET_NEWS':
+      return { ...state, news: action.payload };
     case 'SET_ERROR':
       return { ...state, error: action.payload };
     case 'SHOW_TOAST':

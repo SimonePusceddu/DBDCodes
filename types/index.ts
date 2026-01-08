@@ -61,10 +61,47 @@ export interface NightLightShrineResponse {
 export interface AppState {
   promoCodes: PromoCodesResponse | null;
   shrine: ShrineData | null;
+  news: NewsResponse | null;
   isLoading: boolean;
   isRefreshing: boolean;
   error: string | null;
   toastMessage: string | null;
+}
+
+// === NEWS ===
+export interface NewsItem {
+  id: string;
+  title: string;
+  url: string;
+  author: string;
+  contents: string;
+  feedLabel: string;
+  date: Date;
+}
+
+export interface NewsResponse {
+  items: NewsItem[];
+  lastUpdated: Date;
+}
+
+export interface SteamNewsApiResponse {
+  appnews: {
+    appid: number;
+    newsitems: Array<{
+      gid: string;
+      title: string;
+      url: string;
+      is_external_url: boolean;
+      author: string;
+      contents: string;
+      feedlabel: string;
+      date: number;
+      feedname: string;
+      feed_type: number;
+      appid: number;
+    }>;
+    count: number;
+  };
 }
 
 // === COUNTDOWN ===

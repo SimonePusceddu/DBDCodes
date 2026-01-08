@@ -11,7 +11,8 @@
       "Bash(npm uninstall:*)",
       "WebFetch(domain:nightlight.gg)",
       "WebFetch(domain:api.nightlight.gg)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:api.steampowered.com)"
     ]
   }
 }
