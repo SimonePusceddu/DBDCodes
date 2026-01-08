@@ -47,7 +47,15 @@
           }
         }
       ],
-      "expo-background-task"
+      "expo-background-task",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#DC143C",
+          "sounds": []
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
