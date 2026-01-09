@@ -9,6 +9,7 @@ import { DBDColors } from '@/constants/theme';
 // Import background task to ensure it's defined early
 import '@/tasks/backgroundFetch';
 import { registerBackgroundFetchAsync } from '@/tasks/backgroundFetch';
+import { useAdMobInit } from '@/hooks/useAdMobInit';
 
 // Custom DBD Dark Theme
 const DBDDarkTheme = {
@@ -29,6 +30,9 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
+  // Initialize AdMob on app startup
+  const { isInitialized: isAdMobInitialized } = useAdMobInit();
+
   useEffect(() => {
     // Register background fetch task on app startup
     registerBackgroundFetchAsync().catch(console.error);

@@ -1,9 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ticket, ChevronDown, ChevronUp, Archive } from 'lucide-react-native';
-import { PromoCode } from '@/types';
+import { PromoCode, PromoListItem } from '@/types';
 import { PromoCodeCard } from './PromoCodeCard';
+import { NativeAdCard } from './NativeAdCard';
 import { useSeenCodes } from '@/hooks/useSeenCodes';
+import { insertAdsIntoCodesList } from '@/utils/adInsertion';
+import { AD_CONFIG } from '@/constants/ads';
 import { DBDColors, Spacing, Typography, BorderRadius } from '@/constants/theme';
 
 interface Props {
@@ -55,6 +58,21 @@ export function PromoCodesList({ codes }: Props) {
     return { activeCodes: active, expiredCodes: expired };
   }, [codes, isNewCode, isLoaded]);
 
+  // Create mixed arrays with ads inserted every N codes
+  const activeCodesWithAds = useMemo<PromoListItem[]>(() => {
+    if (!AD_CONFIG.ADS_ENABLED) {
+      return activeCodes.map(code => ({ type: 'code', data: code }));
+    }
+    return insertAdsIntoCodesList(activeCodes, AD_CONFIG.CODES_PER_AD);
+  }, [activeCodes]);
+
+  const expiredCodesWithAds = useMemo<PromoListItem[]>(() => {
+    if (!AD_CONFIG.ADS_ENABLED) {
+      return expiredCodes.map(code => ({ type: 'code', data: code }));
+    }
+    return insertAdsIntoCodesList(expiredCodes, AD_CONFIG.CODES_PER_AD);
+  }, [expiredCodes]);
+
   // Mark all active codes as seen after a short delay (user has seen them)
   useEffect(() => {
     if (isLoaded && activeCodes.length > 0) {
@@ -67,6 +85,20 @@ export function PromoCodesList({ codes }: Props) {
     }
   }, [activeCodes, markMultipleAsSeen, isLoaded]);
 
+  // Helper to render either a code or an ad
+  const renderItem = (item: PromoListItem) => {
+    if (item.type === 'ad') {
+      return <NativeAdCard key={item.id} />;
+    }
+    return (
+      <PromoCodeCard
+        key={item.data.id}
+        code={item.data}
+        isNew={isNewCode(item.data.id)}
+      />
+    );
+  };
+
   if (codes.length === 0) {
     return (
       <View style={styles.container}>
@@ -76,7 +108,6 @@ export function PromoCodesList({ codes }: Props) {
         </View>
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>No codes available</Text>
-          <Text style={styles.emptySubtext}>Pull down to refresh</Text>
         </View>
       </View>
     );
@@ -110,13 +141,7 @@ export function PromoCodesList({ codes }: Props) {
 
       {activeCodes.length > 0 ? (
         <View style={styles.grid}>
-          {activeCodes.map((code) => (
-            <PromoCodeCard
-              key={code.id}
-              code={code}
-              isNew={isNewCode(code.id)}
-            />
-          ))}
+          {activeCodesWithAds.map(renderItem)}
         </View>
       ) : (
         <View style={styles.emptyState}>
@@ -146,9 +171,12 @@ export function PromoCodesList({ codes }: Props) {
 
           {showExpired && (
             <View style={styles.grid}>
-              {expiredCodes.map((code) => (
-                <PromoCodeCard key={code.id} code={code} isExpired />
-              ))}
+              {expiredCodesWithAds.map((item) => {
+                if (item.type === 'ad') {
+                  return <NativeAdCard key={item.id} />;
+                }
+                return <PromoCodeCard key={item.data.id} code={item.data} isExpired />;
+              })}
             </View>
           )}
         </View>

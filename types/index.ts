@@ -18,6 +18,11 @@ export interface PromoCodesResponse {
   error?: string;
 }
 
+// Mixed list item type for codes and ads
+export type PromoListItem =
+  | { type: 'code'; data: PromoCode }
+  | { type: 'ad'; id: string };
+
 // === SHRINE OF SECRETS ===
 export interface ShrinePerk {
   id: number;

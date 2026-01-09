@@ -12,7 +12,9 @@
       "WebFetch(domain:nightlight.gg)",
       "WebFetch(domain:api.nightlight.gg)",
       "mcp__ide__getDiagnostics",
-      "WebFetch(domain:api.steampowered.com)"
+      "WebFetch(domain:api.steampowered.com)",
+      "WebFetch(domain:docs.page)",
+      "WebFetch(domain:ammarahm-ed.github.io)"
     ]
   }
 }
