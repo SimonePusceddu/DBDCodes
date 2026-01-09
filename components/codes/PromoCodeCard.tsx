@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
@@ -12,6 +12,7 @@ import {
   Shadows,
 } from '@/constants/theme';
 import { useAppContext } from '@/context/AppContext';
+import { PromoCodeModal } from './PromoCodeModal';
 
 const CARD_WIDTH = (Dimensions.get('window').width - Spacing.lg * 3) / 2;
 
@@ -23,6 +24,7 @@ interface Props {
 
 export function PromoCodeCard({ code, isNew = false, isExpired = false }: Props) {
   const { dispatch } = useAppContext();
+  const [modalVisible, setModalVisible] = useState(false);
   const isExpiringSoon = !isExpired && code.daysLeft !== null && code.daysLeft <= 7;
 
   const handleCopy = async () => {
@@ -48,12 +50,16 @@ export function PromoCodeCard({ code, isNew = false, isExpired = false }: Props)
   };
 
   return (
-    <View style={[
-      styles.card,
-      isExpired && styles.expiredCard,
-      isExpiringSoon && styles.expiringSoonCard,
-      { borderTopColor: getBorderColor() }
-    ]}>
+    <TouchableOpacity
+      style={[
+        styles.card,
+        isExpired && styles.expiredCard,
+        isExpiringSoon && styles.expiringSoonCard,
+        { borderTopColor: getBorderColor() }
+      ]}
+      onPress={() => setModalVisible(true)}
+      activeOpacity={0.9}
+    >
       {isNew && !isExpired && !isExpiringSoon && (
         <View style={styles.newBadge}>
           <Sparkles size={10} color={DBDColors.text.primary} />
@@ -72,12 +78,18 @@ export function PromoCodeCard({ code, isNew = false, isExpired = false }: Props)
         {code.title}
       </Text>
 
-      <View style={[
-        styles.codeContainer,
-        isExpired && styles.expiredCodeContainer,
-        isExpiringSoon && styles.expiringSoonCodeContainer
-      ]}>
-        <Text style={[styles.codeText, isExpired && styles.expiredCodeText]} numberOfLines={1}>
+      <View
+        style={[
+          styles.codeContainer,
+          isExpired && styles.expiredCodeContainer,
+          isExpiringSoon && styles.expiringSoonCodeContainer
+        ]}
+      >
+        <Text
+          style={[styles.codeText, isExpired && styles.expiredCodeText]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
           {code.code}
         </Text>
       </View>
@@ -99,7 +111,13 @@ export function PromoCodeCard({ code, isNew = false, isExpired = false }: Props)
         <Copy size={14} color={DBDColors.text.primary} />
         <Text style={styles.copyText}>COPY</Text>
       </TouchableOpacity>
-    </View>
+
+      <PromoCodeModal
+        visible={modalVisible}
+        code={code}
+        onClose={() => setModalVisible(false)}
+      />
+    </TouchableOpacity>
   );
 }
 

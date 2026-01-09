@@ -59,7 +59,7 @@ export default function AboutScreen() {
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Notifications</Text>
           <Text style={styles.sectionDescription}>
-            Get notified when background fetch discovers new content
+            Receive alerts when new codes, shrine updates, or news are available
           </Text>
 
           {!hasPermission && (
@@ -100,7 +100,7 @@ export default function AboutScreen() {
 
               <View style={styles.notificationRow}>
                 <View style={styles.notificationLeft}>
-                  <Store size={20} color={DBDColors.shrine.shards} />
+                  <Store size={20} color={DBDColors.accent.secondary} />
                   <View style={styles.notificationTextContainer}>
                     <Text style={styles.notificationTitle}>Shrine of Secrets</Text>
                     <Text style={styles.notificationSubtitle}>
@@ -125,7 +125,7 @@ export default function AboutScreen() {
 
               <View style={styles.notificationRow}>
                 <View style={styles.notificationLeft}>
-                  <Newspaper size={20} color={DBDColors.status.info} />
+                  <Newspaper size={20} color={DBDColors.accent.secondary} />
                   <View style={styles.notificationTextContainer}>
                     <Text style={styles.notificationTitle}>News</Text>
                     <Text style={styles.notificationSubtitle}>
