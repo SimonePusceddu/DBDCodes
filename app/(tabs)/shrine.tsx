@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ShrineGrid } from '@/components/shrine/ShrineGrid';
+import { BannerAdCard } from '@/components/codes/BannerAdCard';
 import { useShrineOfSecrets } from '@/hooks/useShrineOfSecrets';
 import { DBDColors, Spacing, Typography } from '@/constants/theme';
 
@@ -58,6 +59,10 @@ export default function ShrineScreen() {
         </View>
 
         <ShrineGrid perks={shrine.perks} resetTime={shrine.endTime} />
+
+        <View style={styles.adContainer}>
+          <BannerAdCard />
+        </View>
 
         <View style={styles.infoCard}>
           <Text style={styles.infoTitle}>About the Shrine</Text>
@@ -128,6 +133,10 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xl,
     borderLeftWidth: 3,
     borderLeftColor: DBDColors.shrine.shards,
+  },
+  adContainer: {
+    alignItems: 'center',
+    marginTop: Spacing.lg,
   },
   infoTitle: {
     ...Typography.subtitle,

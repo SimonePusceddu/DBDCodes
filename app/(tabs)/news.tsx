@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Newspaper } from 'lucide-react-native';
 import { NewsCard } from '@/components/news/NewsCard';
+import { NewsAdCard } from '@/components/news/NewsAdCard';
 import { useNews } from '@/hooks/useNews';
 import { DBDColors, Spacing, Typography } from '@/constants/theme';
 
@@ -61,9 +62,16 @@ export default function NewsScreen() {
           </Text>
         </View>
 
-        {news.items.map((item) => (
-          <NewsCard key={item.id} item={item} />
-        ))}
+        {news.items.map((item, index) => {
+          const shouldRenderAd = (index + 1) % 5 === 0;
+
+          return (
+            <React.Fragment key={item.id}>
+              <NewsCard item={item} />
+              {shouldRenderAd && <NewsAdCard />}
+            </React.Fragment>
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   );
