@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ShrineGrid } from '@/components/shrine/ShrineGrid';
 import { BannerAdCard } from '@/components/codes/BannerAdCard';
 import { useShrineOfSecrets } from '@/hooks/useShrineOfSecrets';
-import { getAdUnitIdForPlacement } from '@/constants/ads';
+import { AD_CONFIG, getAdUnitIdForPlacement } from '@/constants/ads';
 import { DBDColors, Spacing, Typography } from '@/constants/theme';
 import { useScrollToTop } from '@react-navigation/native';
 
@@ -67,14 +67,16 @@ export default function ShrineScreen() {
 
         <ShrineGrid perks={shrine.perks} resetTime={shrine.endTime} />
 
-        <View style={styles.adContainer}>
-          <BannerAdCard
-            adUnitId={getAdUnitIdForPlacement(
-              'shrine',
-              Platform.OS as 'ios' | 'android'
-            )}
-          />
-        </View>
+        {AD_CONFIG.ADS_ENABLED && (
+          <View style={styles.adContainer}>
+            <BannerAdCard
+              adUnitId={getAdUnitIdForPlacement(
+                'shrine',
+                Platform.OS as 'ios' | 'android'
+              )}
+            />
+          </View>
+        )}
 
         <View style={styles.infoCard}>
           <Text style={styles.infoTitle}>About the Shrine</Text>

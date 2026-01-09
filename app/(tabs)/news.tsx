@@ -12,6 +12,7 @@ import { Newspaper } from 'lucide-react-native';
 import { NewsCard } from '@/components/news/NewsCard';
 import { NewsAdCard } from '@/components/news/NewsAdCard';
 import { useNews } from '@/hooks/useNews';
+import { AD_CONFIG } from '@/constants/ads';
 import { DBDColors, Spacing, Typography } from '@/constants/theme';
 import { useScrollToTop } from '@react-navigation/native';
 
@@ -68,7 +69,8 @@ export default function NewsScreen() {
         </View>
 
         {news.items.map((item, index) => {
-          const shouldRenderAd = (index + 1) % 5 === 0;
+          const shouldRenderAd =
+            AD_CONFIG.ADS_ENABLED && (index + 1) % 5 === 0;
 
           return (
             <React.Fragment key={item.id}>
