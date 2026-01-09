@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   ScrollView,
@@ -13,16 +13,20 @@ import { NewsCard } from '@/components/news/NewsCard';
 import { NewsAdCard } from '@/components/news/NewsAdCard';
 import { useNews } from '@/hooks/useNews';
 import { DBDColors, Spacing, Typography } from '@/constants/theme';
+import { useScrollToTop } from '@react-navigation/native';
 
 export default function NewsScreen() {
   const { news, refresh } = useNews();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const scrollRef = useRef<ScrollView>(null);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await refresh();
     setIsRefreshing(false);
   };
+
+  useScrollToTop(scrollRef);
 
   if (!news) {
     return (
@@ -38,6 +42,7 @@ export default function NewsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
+        ref={scrollRef}
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         refreshControl={

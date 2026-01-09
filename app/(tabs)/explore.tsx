@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, Text, StyleSheet, Linking, TouchableOpacity, Switch, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native';
@@ -11,9 +11,13 @@ import {
   Shadows,
 } from '@/constants/theme';
 import { useNotificationSettings } from '@/hooks/useNotificationSettings';
+import { useScrollToTop } from '@react-navigation/native';
 
 export default function AboutScreen() {
   const { settings, isLoaded, hasPermission, updateSetting, requestPermissions } = useNotificationSettings();
+  const scrollRef = useRef<ScrollView>(null);
+
+  useScrollToTop(scrollRef);
 
   const openLink = (url: string) => {
     Linking.openURL(url);
@@ -41,6 +45,7 @@ export default function AboutScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
+        ref={scrollRef}
         style={styles.scrollView}
         contentContainerStyle={styles.content}
       >

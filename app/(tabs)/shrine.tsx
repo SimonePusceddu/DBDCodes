@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   ScrollView,
@@ -14,16 +14,20 @@ import { BannerAdCard } from '@/components/codes/BannerAdCard';
 import { useShrineOfSecrets } from '@/hooks/useShrineOfSecrets';
 import { getAdUnitIdForPlacement } from '@/constants/ads';
 import { DBDColors, Spacing, Typography } from '@/constants/theme';
+import { useScrollToTop } from '@react-navigation/native';
 
 export default function ShrineScreen() {
   const { shrine, refresh } = useShrineOfSecrets();
   const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const scrollRef = useRef<ScrollView>(null);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await refresh();
     setIsRefreshing(false);
   };
+
+  useScrollToTop(scrollRef);
 
   if (!shrine) {
     return (
@@ -39,6 +43,7 @@ export default function ShrineScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
+        ref={scrollRef}
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         refreshControl={

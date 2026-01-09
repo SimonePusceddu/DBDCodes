@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   View,
   ScrollView,
@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Search, X } from 'lucide-react-native';
 import { TouchableOpacity } from 'react-native';
+import { useScrollToTop } from '@react-navigation/native';
 import { PromoCodesList } from '@/components/codes/PromoCodesList';
 import { Toast } from '@/components/ui/Toast';
 import { usePromoCodes } from '@/hooks/usePromoCodes';
@@ -18,11 +19,14 @@ import { DBDColors, Spacing, Typography, BorderRadius } from '@/constants/theme'
 
 export default function HomeScreen() {
   const { state } = useAppContext();
+  const scrollRef = useRef<ScrollView>(null);
   const {
     codes,
     isLoading,
   } = usePromoCodes();
   const [searchQuery, setSearchQuery] = useState('');
+
+  useScrollToTop(scrollRef);
 
   const filteredCodes = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -50,6 +54,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
+        ref={scrollRef}
         style={styles.scrollView}
         contentContainerStyle={styles.content}
       >
