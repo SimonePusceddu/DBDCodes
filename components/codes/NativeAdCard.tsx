@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, Platform } from 'react-native';
-import NativeAdView from 'react-native-google-mobile-ads';
+import { View, Text, StyleSheet, Dimensions, Platform } from 'react-native';
+import { TestIds } from 'react-native-google-mobile-ads';
 import { DBDColors, Spacing, BorderRadius, Typography, Shadows } from '@/constants/theme';
 import { getAdUnitId } from '@/constants/ads';
 
-const CARD_WIDTH = (Dimensions.get('window').width - Spacing.lg * 3) / 2;
+// Full width for ads (spans entire row)
+const AD_WIDTH = Dimensions.get('window').width - Spacing.lg * 2;
 
 interface Props {
   adUnitId?: string;
 }
 
 export function NativeAdCard({ adUnitId }: Props) {
-  const [nativeAd, setNativeAd] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [adError, setAdError] = useState(false);
 
   // Get platform-specific ad unit ID
@@ -19,23 +20,24 @@ export function NativeAdCard({ adUnitId }: Props) {
 
   useEffect(() => {
     loadAd();
-    return () => {
-      // Cleanup ad on unmount
-      nativeAd?.destroy?.();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadAd = async () => {
     try {
-      // Note: The exact implementation will depend on react-native-google-mobile-ads API
-      // This is a placeholder structure that matches the expected pattern
+      setIsLoading(true);
       setAdError(false);
-      console.log('[NativeAdCard] Ad loading...');
-      // Actual ad loading would happen here with the SDK
+      console.log('[NativeAdCard] Loading ad with ID:', finalAdUnitId);
+
+      // Simulate ad loading for now
+      // In production, this would use the actual Google Mobile Ads SDK
+      setTimeout(() => {
+        setIsLoading(false);
+        console.log('[NativeAdCard] Ad loaded successfully');
+      }, 1000);
     } catch (error) {
       console.error('[NativeAdCard] Ad load error:', error);
       setAdError(true);
+      setIsLoading(false);
     }
   };
 
@@ -51,20 +53,34 @@ export function NativeAdCard({ adUnitId }: Props) {
         <Text style={styles.adBadgeText}>AD</Text>
       </View>
 
-      {/* Ad content will be rendered here by the NativeAdView */}
+      {/* Ad content - Real ads will be integrated here */}
       <View style={styles.content}>
-        <View style={styles.placeholderIcon} />
-        <Text style={styles.title} numberOfLines={2}>
-          Advertisement
-        </Text>
-        <View style={styles.mediaContainer}>
-          <View style={styles.mediaPlaceholder} />
+        <View style={styles.header}>
+          <View style={styles.iconPlaceholder} />
+          <View style={styles.headerText}>
+            <Text style={styles.advertiser} numberOfLines={1}>
+              Test Advertiser
+            </Text>
+            <Text style={styles.sponsored}>Sponsored</Text>
+          </View>
         </View>
-        <Text style={styles.bodyText} numberOfLines={2}>
-          Sponsored content
+
+        <Text style={styles.headline} numberOfLines={2}>
+          {isLoading ? 'Loading ad...' : 'Test Native Ad - Install the app to see real ads!'}
         </Text>
+
+        <View style={styles.mediaContainer}>
+          <View style={styles.mediaPlaceholder}>
+            <Text style={styles.mediaText}>Ad Image</Text>
+          </View>
+        </View>
+
+        <Text style={styles.bodyText} numberOfLines={3}>
+          This is a test native ad. When you configure your production AdMob account, real ads from advertisers will appear here with actual content and images.
+        </Text>
+
         <View style={styles.ctaButton}>
-          <Text style={styles.ctaText}>LEARN MORE</Text>
+          <Text style={styles.ctaText}>INSTALL NOW</Text>
         </View>
       </View>
     </View>
@@ -73,7 +89,7 @@ export function NativeAdCard({ adUnitId }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    width: CARD_WIDTH,
+    width: AD_WIDTH,
     backgroundColor: DBDColors.background.secondary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
@@ -100,48 +116,73 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  placeholderIcon: {
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  iconPlaceholder: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.sm,
     backgroundColor: DBDColors.background.tertiary,
-    marginBottom: Spacing.sm,
+    marginRight: Spacing.sm,
   },
-  title: {
+  headerText: {
+    flex: 1,
+  },
+  advertiser: {
     ...Typography.caption,
     color: DBDColors.text.primary,
     fontWeight: '600',
+  },
+  sponsored: {
+    ...Typography.small,
+    fontSize: 10,
+    color: DBDColors.text.muted,
+  },
+  headline: {
+    ...Typography.body,
+    color: DBDColors.text.primary,
+    fontWeight: '600',
     marginBottom: Spacing.sm,
-    minHeight: 36,
   },
   mediaContainer: {
     backgroundColor: DBDColors.background.tertiary,
     borderRadius: BorderRadius.sm,
     overflow: 'hidden',
     marginBottom: Spacing.sm,
-    height: 80,
+    height: 120,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   mediaPlaceholder: {
     width: '100%',
     height: '100%',
     backgroundColor: DBDColors.background.tertiary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mediaText: {
+    ...Typography.caption,
+    color: DBDColors.text.muted,
   },
   bodyText: {
     ...Typography.small,
     color: DBDColors.text.secondary,
-    marginBottom: Spacing.sm,
-    lineHeight: 16,
+    marginBottom: Spacing.md,
+    lineHeight: 18,
   },
   ctaButton: {
     backgroundColor: DBDColors.accent.primary,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
-    marginTop: Spacing.xs,
   },
   ctaText: {
-    ...Typography.small,
+    ...Typography.body,
     color: DBDColors.text.primary,
     fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
 });

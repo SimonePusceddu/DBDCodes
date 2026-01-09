@@ -6,16 +6,16 @@
  */
 
 export const AD_CONFIG = {
-  // Test IDs (Google's official test IDs)
+  // Test IDs (Google's official test IDs for Banner Ads)
   TEST_IDS: {
-    NATIVE_ANDROID: 'ca-app-pub-3940256099942544/2247696110',
-    NATIVE_IOS: 'ca-app-pub-3940256099942544/3986624511',
+    BANNER_ANDROID: 'ca-app-pub-3940256099942544/6300978111',
+    BANNER_IOS: 'ca-app-pub-3940256099942544/2934735716',
   },
 
   // Production IDs (replace these with your real IDs from AdMob console)
   PROD_IDS: {
-    NATIVE_ANDROID: 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY',
-    NATIVE_IOS: 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY',
+    BANNER_ANDROID: 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY',
+    BANNER_IOS: 'ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY',
   },
 
   // Ad frequency - show an ad every N promo codes
@@ -36,11 +36,11 @@ export const AD_CONFIG = {
 export function getAdUnitId(platform: 'ios' | 'android'): string {
   if (AD_CONFIG.USE_TEST_ADS) {
     return platform === 'ios'
-      ? AD_CONFIG.TEST_IDS.NATIVE_IOS
-      : AD_CONFIG.TEST_IDS.NATIVE_ANDROID;
+      ? AD_CONFIG.TEST_IDS.BANNER_IOS
+      : AD_CONFIG.TEST_IDS.BANNER_ANDROID;
   }
 
   return platform === 'ios'
-    ? AD_CONFIG.PROD_IDS.NATIVE_IOS
-    : AD_CONFIG.PROD_IDS.NATIVE_ANDROID;
+    ? AD_CONFIG.PROD_IDS.BANNER_IOS
+    : AD_CONFIG.PROD_IDS.BANNER_ANDROID;
 }

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ticket, ChevronDown, ChevronUp, Archive } from 'lucide-react-native';
 import { PromoCode, PromoListItem } from '@/types';
 import { PromoCodeCard } from './PromoCodeCard';
-import { NativeAdCard } from './NativeAdCard';
+import { BannerAdCard } from './BannerAdCard';
 import { useSeenCodes } from '@/hooks/useSeenCodes';
 import { insertAdsIntoCodesList } from '@/utils/adInsertion';
 import { AD_CONFIG } from '@/constants/ads';
@@ -88,7 +88,7 @@ export function PromoCodesList({ codes }: Props) {
   // Helper to render either a code or an ad
   const renderItem = (item: PromoListItem) => {
     if (item.type === 'ad') {
-      return <NativeAdCard key={item.id} />;
+      return <BannerAdCard key={item.id} />;
     }
     return (
       <PromoCodeCard
@@ -173,7 +173,7 @@ export function PromoCodesList({ codes }: Props) {
             <View style={styles.grid}>
               {expiredCodesWithAds.map((item) => {
                 if (item.type === 'ad') {
-                  return <NativeAdCard key={item.id} />;
+                  return <BannerAdCard key={item.id} />;
                 }
                 return <PromoCodeCard key={item.data.id} code={item.data} isExpired />;
               })}
