@@ -28,7 +28,8 @@
         "RECEIVE_BOOT_COMPLETED",
         "INTERNET",
         "ACCESS_NETWORK_STATE"
-      ]
+      ],
+      "package": "com.simololler.DBDCodes"
     },
     "web": {
       "output": "static",
@@ -68,6 +69,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c1df73f8-569f-40f1-b41c-3f97cd8c26e3"
+      }
     }
   }
 }
