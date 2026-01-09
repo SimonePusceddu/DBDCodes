@@ -8,7 +8,7 @@ import {
   Shadows,
   Typography,
 } from '@/constants/theme';
-import { getAdUnitId } from '@/constants/ads';
+import { getAdUnitIdForPlacement } from '@/constants/ads';
 
 const AD_WIDTH = Dimensions.get('window').width - Spacing.lg * 2;
 
@@ -20,7 +20,9 @@ export function NewsAdCard({ adUnitId }: Props) {
   const [adLoaded, setAdLoaded] = useState(false);
   const [adError, setAdError] = useState(false);
 
-  const finalAdUnitId = adUnitId || getAdUnitId(Platform.OS as 'ios' | 'android');
+  const finalAdUnitId =
+    adUnitId ||
+    getAdUnitIdForPlacement('news', Platform.OS as 'ios' | 'android');
 
   const handleAdLoaded = () => {
     setAdLoaded(true);

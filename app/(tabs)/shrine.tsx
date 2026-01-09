@@ -6,11 +6,13 @@ import {
   StyleSheet,
   Text,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ShrineGrid } from '@/components/shrine/ShrineGrid';
 import { BannerAdCard } from '@/components/codes/BannerAdCard';
 import { useShrineOfSecrets } from '@/hooks/useShrineOfSecrets';
+import { getAdUnitIdForPlacement } from '@/constants/ads';
 import { DBDColors, Spacing, Typography } from '@/constants/theme';
 
 export default function ShrineScreen() {
@@ -61,7 +63,12 @@ export default function ShrineScreen() {
         <ShrineGrid perks={shrine.perks} resetTime={shrine.endTime} />
 
         <View style={styles.adContainer}>
-          <BannerAdCard />
+          <BannerAdCard
+            adUnitId={getAdUnitIdForPlacement(
+              'shrine',
+              Platform.OS as 'ios' | 'android'
+            )}
+          />
         </View>
 
         <View style={styles.infoCard}>
