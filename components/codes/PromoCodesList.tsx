@@ -1,13 +1,13 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ticket, ChevronDown, ChevronUp, Archive } from 'lucide-react-native';
-import { PromoCode, PromoListItem } from '@/types';
-import { PromoCodeCard } from './PromoCodeCard';
-import { BannerAdCard } from './BannerAdCard';
-import { useSeenCodes } from '@/hooks/useSeenCodes';
-import { insertAdsIntoCodesList } from '@/utils/adInsertion';
 import { AD_CONFIG } from '@/constants/ads';
-import { DBDColors, Spacing, Typography, BorderRadius } from '@/constants/theme';
+import { BorderRadius, DBDColors, Spacing, Typography } from '@/constants/theme';
+import { useSeenCodes } from '@/hooks/useSeenCodes';
+import { PromoCode, PromoListItem } from '@/types';
+import { insertAdsIntoCodesList } from '@/utils/adInsertion';
+import { Archive, ChevronDown, ChevronUp, Sparkles, Ticket } from 'lucide-react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BannerAdCard } from './BannerAdCard';
+import { PromoCodeCard } from './PromoCodeCard';
 
 interface Props {
   codes: PromoCode[];
@@ -17,54 +17,57 @@ export function PromoCodesList({ codes }: Props) {
   const [showExpired, setShowExpired] = useState(false);
   const { isNewCode, markMultipleAsSeen, isLoaded } = useSeenCodes();
 
-  const { activeCodes, expiredCodes } = useMemo(() => {
-    const active: PromoCode[] = [];
+  // Separate new codes from other active codes
+  const { newCodes, otherActiveCodes, expiredCodes } = useMemo(() => {
+    const newList: PromoCode[] = [];
+    const otherActive: PromoCode[] = [];
     const expired: PromoCode[] = [];
 
     codes.forEach((code) => {
       if (code.isExpired) {
         expired.push(code);
+      } else if (isLoaded && isNewCode(code.id)) {
+        newList.push(code);
       } else {
-        active.push(code);
+        otherActive.push(code);
       }
     });
 
-    // Sort active codes: new codes first, then expiring soon, then by days left (soonest first)
-    active.sort((a, b) => {
-      const aIsNew = isLoaded && isNewCode(a.id);
-      const bIsNew = isLoaded && isNewCode(b.id);
+    // Sort other active codes: expiring soon first, then by days left
+    otherActive.sort((a, b) => {
       const aExpiringSoon = a.daysLeft !== null && a.daysLeft <= 7;
       const bExpiringSoon = b.daysLeft !== null && b.daysLeft <= 7;
 
-      // 1. New codes first
-      if (aIsNew && !bIsNew) return -1;
-      if (!aIsNew && bIsNew) return 1;
+      // Expiring soon codes come first
+      if (aExpiringSoon && !bExpiringSoon) return -1;
+      if (!aExpiringSoon && bExpiringSoon) return 1;
 
-      // 2. Among non-new codes, expiring soon (<=7 days) come next
-      if (!aIsNew && !bIsNew) {
-        if (aExpiringSoon && !bExpiringSoon) return -1;
-        if (!aExpiringSoon && bExpiringSoon) return 1;
-
-        // Within expiring soon, sort by fewest days first
-        if (aExpiringSoon && bExpiringSoon) {
-          return (a.daysLeft ?? 999) - (b.daysLeft ?? 999);
-        }
+      // Within expiring soon, sort by fewest days first
+      if (aExpiringSoon && bExpiringSoon) {
+        return (a.daysLeft ?? 999) - (b.daysLeft ?? 999);
       }
 
-      // 3. Then by days left (soonest first - fewest days first)
+      // Then by days left (soonest first)
       return (a.daysLeft ?? 999) - (b.daysLeft ?? 999);
     });
 
-    return { activeCodes: active, expiredCodes: expired };
+    return { newCodes: newList, otherActiveCodes: otherActive, expiredCodes: expired };
   }, [codes, isNewCode, isLoaded]);
 
   // Create mixed arrays with ads inserted every N codes
-  const activeCodesWithAds = useMemo<PromoListItem[]>(() => {
+  const newCodesWithAds = useMemo<PromoListItem[]>(() => {
     if (!AD_CONFIG.ADS_ENABLED) {
-      return activeCodes.map(code => ({ type: 'code', data: code }));
+      return newCodes.map(code => ({ type: 'code', data: code }));
     }
-    return insertAdsIntoCodesList(activeCodes, AD_CONFIG.CODES_PER_AD);
-  }, [activeCodes]);
+    return insertAdsIntoCodesList(newCodes, AD_CONFIG.CODES_PER_AD);
+  }, [newCodes]);
+
+  const otherActiveCodesWithAds = useMemo<PromoListItem[]>(() => {
+    if (!AD_CONFIG.ADS_ENABLED) {
+      return otherActiveCodes.map(code => ({ type: 'code', data: code }));
+    }
+    return insertAdsIntoCodesList(otherActiveCodes, AD_CONFIG.CODES_PER_AD);
+  }, [otherActiveCodes]);
 
   const expiredCodesWithAds = useMemo<PromoListItem[]>(() => {
     if (!AD_CONFIG.ADS_ENABLED) {
@@ -75,18 +78,19 @@ export function PromoCodesList({ codes }: Props) {
 
   // Mark all active codes as seen after a short delay (user has seen them)
   useEffect(() => {
-    if (isLoaded && activeCodes.length > 0) {
+    const allActiveCodes = [...newCodes, ...otherActiveCodes];
+    if (isLoaded && allActiveCodes.length > 0) {
       const timer = setTimeout(() => {
-        const codeIds = activeCodes.map((c) => c.id);
+        const codeIds = allActiveCodes.map((c) => c.id);
         markMultipleAsSeen(codeIds);
-      }, 3000); // Mark as seen after 3 seconds
+      }, 30000); // Mark as seen after 30 seconds - gives users time to see and copy new codes
 
       return () => clearTimeout(timer);
     }
-  }, [activeCodes, markMultipleAsSeen, isLoaded]);
+  }, [newCodes, otherActiveCodes, markMultipleAsSeen, isLoaded]);
 
   // Helper to render either a code or an ad
-  const renderItem = (item: PromoListItem) => {
+  const renderItem = (item: PromoListItem, isNew: boolean = false) => {
     if (item.type === 'ad') {
       return <BannerAdCard key={item.id} />;
     }
@@ -94,7 +98,7 @@ export function PromoCodesList({ codes }: Props) {
       <PromoCodeCard
         key={item.data.id}
         code={item.data}
-        isNew={isNewCode(item.data.id)}
+        isNew={isNew}
       />
     );
   };
@@ -113,37 +117,69 @@ export function PromoCodesList({ codes }: Props) {
     );
   }
 
-  const newCodesCount = activeCodes.filter((c) => isNewCode(c.id)).length;
-  const expiringSoonCount = activeCodes.filter(
-    (c) => !isNewCode(c.id) && c.daysLeft !== null && c.daysLeft <= 7
+  const expiringSoonCount = otherActiveCodes.filter(
+    (c) => c.daysLeft !== null && c.daysLeft <= 7
   ).length;
+  const totalActiveCodes = newCodes.length + otherActiveCodes.length;
 
   return (
     <View style={styles.container}>
-      {/* Active Codes Section */}
-      <View style={styles.header}>
-        <Ticket size={24} color={DBDColors.accent.secondary} />
-        <Text style={styles.title}>Active Codes</Text>
-        {newCodesCount > 0 && (
-          <View style={styles.newBadge}>
-            <Text style={styles.newBadgeText}>{newCodesCount} NEW</Text>
+      {/* NEW CODES SECTION */}
+      {newCodes.length > 0 && (
+        <View style={styles.newCodesSection}>
+          <View style={styles.newCodesHeader}>
+            <View style={styles.newCodesHeaderLeft}>
+              <View style={styles.sparkleIconContainer}>
+                <Sparkles size={20} color={DBDColors.text.primary} />
+              </View>
+              <View>
+                <Text style={styles.newCodesTitle}>New Codes!</Text>
+                <Text style={styles.newCodesSubtitle}>
+                  {newCodes.length} new {newCodes.length === 1 ? 'code' : 'codes'} available
+                </Text>
+              </View>
+            </View>
           </View>
-        )}
-        {expiringSoonCount > 0 && (
-          <View style={styles.warnBadge}>
-            <Text style={styles.warnBadgeText}>{expiringSoonCount} EXPIRING</Text>
+          <View style={styles.grid}>
+            {newCodesWithAds.map((item) => renderItem(item, true))}
           </View>
-        )}
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{activeCodes.length}</Text>
         </View>
-      </View>
+      )}
 
-      {activeCodes.length > 0 ? (
-        <View style={styles.grid}>
-          {activeCodesWithAds.map(renderItem)}
+      {/* OTHER ACTIVE CODES SECTION */}
+      {otherActiveCodes.length > 0 && (
+        <View style={styles.otherCodesSection}>
+          <View style={styles.header}>
+            <Ticket size={24} color={DBDColors.accent.secondary} />
+            <Text style={styles.title}>
+              {newCodes.length > 0 ? 'Other Active Codes' : 'Active Codes'}
+            </Text>
+            {expiringSoonCount > 0 && (
+              <View style={styles.warnBadge}>
+                <Text style={styles.warnBadgeText}>{expiringSoonCount} EXPIRING</Text>
+              </View>
+            )}
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{otherActiveCodes.length}</Text>
+            </View>
+          </View>
+          <View style={styles.grid}>
+            {otherActiveCodesWithAds.map((item) => renderItem(item, false))}
+          </View>
         </View>
-      ) : (
+      )}
+
+      {/* Empty state when no active codes */}
+      {totalActiveCodes === 0 && (
+        <View style={styles.header}>
+          <Ticket size={24} color={DBDColors.accent.secondary} />
+          <Text style={styles.title}>Active Codes</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>0</Text>
+          </View>
+        </View>
+      )}
+      {totalActiveCodes === 0 && (
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>No active codes right now</Text>
         </View>
@@ -280,5 +316,40 @@ const styles = StyleSheet.create({
     ...Typography.small,
     color: DBDColors.text.muted,
     fontWeight: 'bold',
+  },
+  // New Codes Section Styles
+  newCodesSection: {
+    marginBottom: Spacing.xl,
+  },
+  newCodesHeader: {
+    backgroundColor: DBDColors.status.success + '20',
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: DBDColors.status.success,
+  },
+  newCodesHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  sparkleIconContainer: {
+    backgroundColor: DBDColors.status.success,
+    borderRadius: BorderRadius.full,
+    padding: Spacing.sm,
+  },
+  newCodesTitle: {
+    ...Typography.title,
+    color: DBDColors.status.success,
+    fontWeight: 'bold',
+  },
+  newCodesSubtitle: {
+    ...Typography.small,
+    color: DBDColors.text.secondary,
+    marginTop: 2,
+  },
+  otherCodesSection: {
+    marginTop: Spacing.md,
   },
 });
